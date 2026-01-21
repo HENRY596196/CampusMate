@@ -1,66 +1,80 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>學霸課表與成績</title>
-        <link rel="manifest" href="manifest.json">
-        <meta name="theme-color" content="#4a90e2">
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學霸課表</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-        <nav>
-            <h1 id="app-title">我的課表</h1>
-            <span id="user-badge" style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
-        </nav>
+    <nav>
+        <h1 id="app-title">📅 我的週課表</h1>
+        <span id="user-badge" style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
+    </nav>
 
-        <div class="container">
-            <div class="card">
-                <h2>📅 本日課表 (週<span id="today-day">一</span>)</h2>
-                <table id="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>節次/時間</th>
-                            <th>科目</th>
-                            <th>教室</th>
-                        </tr>
-                    </thead>
-                    <tbody id="schedule-body">
-                        </tbody>
-                </table>
-                <button class="btn btn-add" onclick="addItem('schedule')">+ 新增課程</button>
+    <div class="container">
+        <div class="card">
+            <div class="week-tabs">
+                <button class="tab-btn" onclick="switchDay(1)" id="tab-1">一</button>
+                <button class="tab-btn" onclick="switchDay(2)" id="tab-2">二</button>
+                <button class="tab-btn" onclick="switchDay(3)" id="tab-3">三</button>
+                <button class="tab-btn" onclick="switchDay(4)" id="tab-4">四</button>
+                <button class="tab-btn" onclick="switchDay(5)" id="tab-5">五</button>
             </div>
 
-            <div class="card">
-                <h2>📊 成績單</h2>
-                <table id="grade-table">
-                    <thead>
-                        <tr>
-                            <th>科目</th>
-                            <th class="uni-only">學分</th>
-                            <th>分數</th>
-                        </tr>
-                    </thead>
-                    <tbody id="grade-body">
-                        </tbody>
-                </table>
-                <div style="margin-top: 15px; text-align: right; font-weight: bold;">
-                    平均: <span id="average-score">0.0</span>
-                </div>
-                <button class="btn btn-add" onclick="addItem('grade')">+ 新增成績</button>
-            </div>
+            <h2 id="schedule-title">本日課程</h2>
+            <table id="schedule-table">
+                <thead>
+                    <tr>
+                        <th width="30%">時間</th>
+                        <th width="40%">科目</th>
+                        <th width="30%">地點</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    </tbody>
+            </table>
+            <button class="btn btn-add" onclick="addItem()">+ 編輯本週課表</button>
         </div>
 
-        <div id="welcome-modal" class="modal">
-            <div class="modal-content">
-                <h3>歡迎使用！</h3>
-                <p>請問您目前的學習階段是？</p>
-                <button class="modal-btn" onclick="setUserType('highschool')">我是高中生</button>
-                <button class="modal-btn" onclick="setUserType('university')">我是大學生</button>
+        <div class="card">
+            <h2>📊 成績單</h2>
+            <table id="grade-table">
+                <thead>
+                    <tr>
+                        <th>科目</th>
+                        <th class="uni-only">學分</th>
+                        <th>分數</th>
+                    </tr>
+                </thead>
+                <tbody id="grade-body">
+                    </tbody>
+            </table>
+            <div style="margin-top: 15px; text-align: right; font-weight: bold; color: var(--primary);">
+                總平均: <span id="average-score" style="font-size: 1.2rem;">0.0</span>
             </div>
+            <button class="btn btn-add" onclick="addItem()">+ 新增成績</button>
         </div>
+    </div>
 
-        <script src="js/script.js"></script>
-    </body>
+    <div id="welcome-modal" class="modal">
+        <div class="modal-content">
+            <h3>🎓 歡迎使用</h3>
+            <p>為了提供最適合的格式，<br>請問您的身分是？</p>
+            <button class="modal-btn" onclick="setUserType('highschool')">我是高中生</button>
+            <button class="modal-btn" onclick="setUserType('university')">我是大學生</button>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./js/sw.js');
+        }
+    </script>
+</body>
 </html>
