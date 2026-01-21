@@ -12,7 +12,12 @@
 
     <nav>
         <h1 id="app-title">📅 我的週課表</h1>
-        <span id="user-badge" style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="user-badge" style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
+            <button onclick="resetIdentity()" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">
+                切換
+            </button>
+        </div>
     </nav>
 
     <div class="container">
@@ -29,15 +34,15 @@
             <table id="schedule-table">
                 <thead>
                     <tr>
-                        <th width="30%">時間</th>
+                        <th width="25%">時間</th>
                         <th width="40%">科目</th>
-                        <th width="30%">地點</th>
+                        <th width="35%">地點</th>
                     </tr>
                 </thead>
                 <tbody id="schedule-body">
                     </tbody>
             </table>
-            <button class="btn btn-add" onclick="addItem()">+ 編輯本週課表</button>
+            <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button>
         </div>
 
         <div class="card">
@@ -50,28 +55,54 @@
                         <th>分數</th>
                     </tr>
                 </thead>
-                <tbody id="grade-body">
-                    </tbody>
+                <tbody id="grade-body"></tbody>
             </table>
             <div style="margin-top: 15px; text-align: right; font-weight: bold; color: var(--primary);">
                 總平均: <span id="average-score" style="font-size: 1.2rem;">0.0</span>
             </div>
-            <button class="btn btn-add" onclick="addItem()">+ 新增成績</button>
+            <button class="btn btn-add" onclick="alert('成績編輯功能即將推出！')">+ 新增成績</button>
         </div>
     </div>
 
     <div id="welcome-modal" class="modal">
         <div class="modal-content">
             <h3>🎓 歡迎使用</h3>
-            <p>為了提供最適合的格式，<br>請問您的身分是？</p>
+            <p>請問您的身分是？</p>
             <button class="modal-btn" onclick="setUserType('highschool')">我是高中生</button>
             <button class="modal-btn" onclick="setUserType('university')">我是大學生</button>
         </div>
     </div>
 
+    <div id="course-modal" class="modal">
+        <div class="modal-content" style="text-align: left;">
+            <h3 style="text-align: center; margin-top:0;">✏️ 編輯課程</h3>
+            
+            <div id="current-course-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
+                </div>
+
+            <hr style="border:0; border-top:1px dashed #ddd; margin: 15px 0;">
+
+            <h4 style="margin: 0 0 10px 0; color: var(--primary);">新增一堂課</h4>
+            <div class="input-group">
+                <label>時間 (如 09:00 或 第一節)</label>
+                <input type="text" id="input-time" placeholder="輸入時間...">
+            </div>
+            <div class="input-group">
+                <label>科目</label>
+                <input type="text" id="input-subject" placeholder="輸入科目名稱...">
+            </div>
+            <div class="input-group">
+                <label>教室/地點</label>
+                <input type="text" id="input-room" placeholder="輸入地點...">
+            </div>
+
+            <button class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button>
+            <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeEditModal()">關閉</button>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
     <script>
-        // 註冊 Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./js/sw.js');
         }
