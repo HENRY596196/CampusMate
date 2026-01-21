@@ -1,3 +1,22 @@
+// --- 1. Firebase 設定 -----------------------------
+const firebaseConfig = {
+    apiKey: "AIzaSyDCjUE-uDGHuTwShun_hUkHI0OgAEGx_Zk",
+    authDomain: "campusmate-aa158.firebaseapp.com",
+    projectId: "campusmate-aa158",
+    storageBucket: "campusmate-aa158.firebasestorage.app",
+    messagingSenderId: "233940430236",
+    appId: "1:233940430236:web:0c7c25280a6074e6bb6c59",
+    measurementId: "G-RJBVYV11FB"
+};
+// --------------------------------------------------
+
+// 初始化 Firebase (這是我們用的 CDN 寫法，跟截圖不一樣是正常的)
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
+
+
+//----------------------------------------------------------
 let userType = localStorage.getItem('userType');
 let currentDay = new Date().getDay(); 
 if (currentDay === 0 || currentDay === 6) currentDay = 1;
