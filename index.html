@@ -7,18 +7,33 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4a90e2">
     <link rel="stylesheet" href="styles.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 
     <nav>
         <h1 id="app-title">📅 我的週課表</h1>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span id="user-badge" style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
-            <button onclick="resetIdentity()" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">
-                切換
+        <div id="user-info" style="display: none; align-items: center; gap: 10px;">
+            <img id="user-photo" src="" style="width: 28px; height: 28px; border-radius: 50%;">
+            <button onclick="logout()" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">
+                登出
             </button>
         </div>
     </nav>
+
+    <div id="login-overlay">
+        <div class="login-card">
+            <h1>🎓 CampusMate</h1>
+            <p>請登入以存取您的課表</p>
+            <button class="btn-google" onclick="loginWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                使用 Google 登入
+            </button>
+            <p style="font-size: 0.8rem; color: #999; margin-top: 20px;">資料將自動儲存於此裝置</p>
+        </div>
+    </div>
 
     <div class="container">
         <div class="card">
@@ -39,8 +54,7 @@
                         <th width="35%">地點</th>
                     </tr>
                 </thead>
-                <tbody id="schedule-body">
-                    </tbody>
+                <tbody id="schedule-body"></tbody>
             </table>
             <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button>
         </div>
@@ -76,36 +90,17 @@
     <div id="course-modal" class="modal">
         <div class="modal-content" style="text-align: left;">
             <h3 style="text-align: center; margin-top:0;">✏️ 編輯課程</h3>
-            
-            <div id="current-course-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
-                </div>
-
+            <div id="current-course-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;"></div>
             <hr style="border:0; border-top:1px dashed #ddd; margin: 15px 0;">
-
             <h4 style="margin: 0 0 10px 0; color: var(--primary);">新增一堂課</h4>
-            <div class="input-group">
-                <label>時間 (如 09:00 或 第一節)</label>
-                <input type="text" id="input-time" placeholder="輸入時間...">
-            </div>
-            <div class="input-group">
-                <label>科目</label>
-                <input type="text" id="input-subject" placeholder="輸入科目名稱...">
-            </div>
-            <div class="input-group">
-                <label>教室/地點</label>
-                <input type="text" id="input-room" placeholder="輸入地點...">
-            </div>
-
+            <div class="input-group"><label>時間</label><input type="text" id="input-time" placeholder="輸入時間..."></div>
+            <div class="input-group"><label>科目</label><input type="text" id="input-subject" placeholder="輸入科目..."></div>
+            <div class="input-group"><label>地點</label><input type="text" id="input-room" placeholder="輸入地點..."></div>
             <button class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button>
             <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeEditModal()">關閉</button>
         </div>
     </div>
 
     <script src="js/script.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./js/sw.js');
-        }
-    </script>
 </body>
 </html>
