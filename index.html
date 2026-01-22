@@ -47,7 +47,7 @@
             </button>
     
             <button class="btn-anon" onclick="loginAnonymously()">
-                👻 匿名試用 (不儲存雲端)
+                👻 匿名 登入
             </button>
         </div>
     </div>
@@ -73,8 +73,7 @@
                 </thead>
                 <tbody id="schedule-body"></tbody>
             </table>
-            <!-- <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button> -->
-            <button class="btn btn-add" onclick="openGradeModal()">+ 編輯成績</button>
+            <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button>
         </div>
 
         <div class="card">
@@ -92,7 +91,8 @@
             <div style="margin-top: 15px; text-align: right; font-weight: bold; color: var(--primary);">
                 總平均: <span id="average-score" style="font-size: 1.2rem;">0.0</span>
             </div>
-            <button class="btn btn-add" onclick="alert('成績編輯功能即將推出！')">+ 新增成績</button>
+            <!-- <button class="btn btn-add" onclick="alert('成績編輯功能即將推出！')">+ 新增成績</button> -->
+            <button class="btn btn-add" onclick="openGradeModal()">+ 編輯成績</button>
         </div>
     </div>
 
@@ -150,6 +150,7 @@
     <script src="js/script.js"></script>
 </body>
 </html>
+
 
 
 
