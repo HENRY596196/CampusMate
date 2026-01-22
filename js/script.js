@@ -273,19 +273,65 @@ function addGrade() {
 function deleteGrade(index) {
     if (confirm('確定刪除？')) { gradeList.splice(index, 1); saveData(); renderGradeEditList(); }
 }
+
 function loadGrades() {
     const tbody = document.getElementById('grade-body');
-    if(!tbody) return;
+    if (!tbody) return;
     tbody.innerHTML = '';
-    let totalScore = 0, totalCredits = 0, count = 0;
+
+    let totalScore = 0;   // 加權總分
+    let totalCredits = 0; // 總學分 (分母)
+    let earnedCredits = 0; // 實得學分 (累計及格的學分)
+    let count = 0;
+
     gradeList.forEach(g => {
-        const credit = parseFloat(g.credit)||0, score = parseFloat(g.score)||0;
-        if (userType === 'university') { totalScore += score * credit; totalCredits += credit; } 
-        else { totalScore += score; count++; }
-        tbody.innerHTML += `<tr><td>${g.subject}</td>${userType==='university'?`<td>${credit}</td>`:''} <td style="font-weight:bold; color:${score<60?'#e74c3c':'#2ecc71'}">${score}</td></tr>`;
+        const credit = parseFloat(g.credit) || 0;
+        const score = parseFloat(g.score) || 0;
+
+        // --- 新增邏輯：計算實得學分 ---
+        // 及格 (>=60) 則獲得該學分，否則為 0
+        const isPass = score >= 60;
+        const thisEarned = isPass ? credit : 0;
+
+        if (isPass) {
+            earnedCredits += credit;
+        }
+        // ---------------------------
+
+        if (userType === 'university') {
+            totalScore += score * credit;
+            totalCredits += credit;
+        } else {
+            totalScore += score;
+            count++;
+        }
+
+        // --- 更新表格顯示：加入實得學分欄位 ---
+        const row = `
+            <tr>
+                <td>${g.subject}</td>
+                ${userType === 'university' ? `<td>${credit}</td><td>${thisEarned}</td>` : ''}
+                <td style="font-weight:bold; color:${isPass ? '#2ecc71' : '#e74c3c'}">
+                    ${score}
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
     });
+
+    // 計算平均
     let average = 0;
-    if (userType === 'university') { if (totalCredits > 0) average = totalScore / totalCredits; } 
-    else { if (count > 0) average = totalScore / count; }
-    document.getElementById('average-score').innerText = average.toFixed(1);
+    if (userType === 'university') {
+        if (totalCredits > 0) average = totalScore / totalCredits;
+    } else {
+        if (count > 0) average = totalScore / count;
+    }
+
+    // 更新下方總結文字，多顯示「實得學分」
+    const summaryText = userType === 'university'
+        ? `平均: ${average.toFixed(1)} <span style="font-size:0.8rem; color:#666; margin-left:5px;">(實得 ${earnedCredits} 學分)</span>`
+        : `平均: ${average.toFixed(1)}`;
+
+    document.getElementById('average-score').innerHTML = summaryText;
 }
+
