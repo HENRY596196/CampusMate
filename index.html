@@ -8,7 +8,6 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4a90e2">
     <link rel="stylesheet" href="styles.css">
-
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
@@ -17,52 +16,42 @@
 
     <nav>
         <h1 id="app-title">📅 CampusMate</h1>
-
         <div id="user-info" style="display: none; align-items: center; gap: 10px;">
             <span id="user-badge"
                 style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
             <img id="user-photo" src="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
             <button onclick="logout()"
-                style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">
-                登出
-            </button>
+                style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">登出</button>
         </div>
     </nav>
 
     <div id="login-overlay">
         <div class="login-card">
             <h1 style="margin-top:0;">🎓 歡迎使用</h1>
-
             <div id="email-form">
                 <input type="email" id="email" class="login-input" placeholder="電子信箱 (Email)">
                 <input type="password" id="password" class="login-input" placeholder="密碼 (至少6位數)">
-
                 <button class="btn-primary" onclick="handleEmailAuth()" id="btn-submit">登入</button>
-
                 <p style="font-size: 0.9rem; color: #666;">
                     <span id="toggle-text">還沒有帳號？</span>
                     <span class="text-link" onclick="toggleLoginMode()" id="toggle-btn">建立新帳號</span>
                 </p>
             </div>
-
             <div class="divider">或使用其他方式</div>
-
             <button class="btn-google" onclick="loginWithGoogle()" style="margin-top:0;">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
-                Google 登入
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google 登入
             </button>
-
-            <button class="btn-anon" onclick="loginAnonymously()">
-                👻 匿名試用 (不儲存雲端)
-            </button>
+            <button class="btn-anon" onclick="loginAnonymously()">👻 匿名試用 (不儲存雲端)</button>
         </div>
     </div>
 
     <div class="container">
 
         <div class="semester-control">
-            <select id="semester-select" class="semester-select" onchange="switchSemester()">
-            </select>
+            <select id="semester-select" class="semester-select" onchange="switchSemester()"></select>
+            <button class="btn-icon" onclick="editSemester()" title="重新命名學期">✏️</button>
+            <button class="btn-icon btn-delete-sem" onclick="deleteSemester()" title="刪除本學期"
+                style="color: #e74c3c;">🗑️</button>
             <button class="btn-new-sem" onclick="addNewSemester()">+ 新學期</button>
         </div>
 
@@ -79,13 +68,14 @@
             <table id="schedule-table">
                 <thead>
                     <tr>
-                        <th width="25%">時間</th>
-                        <th width="40%">科目</th>
-                        <th width="35%">地點</th>
+                        <th width="15%">節次</th>
+                        <th width="20%">時間</th>
+                        <th width="25%">科目</th>
+                        <th width="20%">地點</th>
+                        <th width="20%">老師</th>
                     </tr>
                 </thead>
-                <tbody id="schedule-body">
-                </tbody>
+                <tbody id="schedule-body"></tbody>
             </table>
             <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button>
         </div>
@@ -97,7 +87,7 @@
                     <tr>
                         <th>科目</th>
                         <th class="uni-only">學分</th>
-                        <th class="uni-only">實得學分</th>
+                        <th class="uni-only">實得</th>
                         <th>分數</th>
                     </tr>
                 </thead>
@@ -125,9 +115,14 @@
             <div id="current-course-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;"></div>
             <hr style="border:0; border-top:1px dashed #ddd; margin: 15px 0;">
             <h4 style="margin: 0 0 10px 0; color: var(--primary);">新增一堂課</h4>
-            <div class="input-group"><label>時間</label><input type="text" id="input-time" placeholder="輸入時間..."></div>
+            <div class="input-group"><label>節次 (如: 1, 2, A)</label><input type="text" id="input-period"
+                    placeholder="輸入節次..."></div>
+            <div class="input-group"><label>時間 (如: 08:10)</label><input type="text" id="input-time"
+                    placeholder="輸入時間..."></div>
             <div class="input-group"><label>科目</label><input type="text" id="input-subject" placeholder="輸入科目..."></div>
             <div class="input-group"><label>地點</label><input type="text" id="input-room" placeholder="輸入地點..."></div>
+            <div class="input-group"><label>老師 (選填)</label><input type="text" id="input-teacher" placeholder="輸入老師...">
+            </div>
             <button class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button>
             <button class="btn"
                 style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;"
@@ -141,17 +136,11 @@
             <div id="current-grade-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;"></div>
             <hr style="border:0; border-top:1px dashed #ddd; margin: 15px 0;">
             <h4 style="margin: 0 0 10px 0; color: var(--primary);">新增一科</h4>
-            <div class="input-group">
-                <label>科目名稱</label>
-                <input type="text" id="input-grade-subject" placeholder="例如：微積分">
-            </div>
-            <div class="input-group" id="input-credit-group">
-                <label>學分</label>
-                <input type="number" id="input-grade-credit" placeholder="例如：3" value="1">
-            </div>
-            <div class="input-group">
-                <label>分數</label>
-                <input type="number" id="input-grade-score" placeholder="例如：85">
+            <div class="input-group"><label>科目名稱</label><input type="text" id="input-grade-subject"
+                    placeholder="例如：微積分"></div>
+            <div class="input-group" id="input-credit-group"><label>學分</label><input type="number"
+                    id="input-grade-credit" placeholder="例如：3" value="1"></div>
+            <div class="input-group"><label>分數</label><input type="number" id="input-grade-score" placeholder="例如：85">
             </div>
             <button class="btn" style="width: 100%; background: #333;" onclick="addGrade()">+ 加入成績單</button>
             <button class="btn"
@@ -161,12 +150,7 @@
     </div>
 
     <script src="js/script.js"></script>
-    <script>
-        // 註冊 PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./js/sw.js');
-        }
-    </script>
+    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./js/sw.js'); }</script>
 </body>
 
 </html>
