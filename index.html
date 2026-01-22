@@ -25,13 +25,30 @@
 
     <div id="login-overlay">
         <div class="login-card">
-            <h1>🎓 CampusMate</h1>
-            <p>請登入以存取您的課表</p>
-            <button class="btn-google" onclick="loginWithGoogle()">
+             <h1 style="margin-top:0;">🎓 CampusMate</h1>
+                
+            <div id="email-form">
+                <input type="email" id="email" class="login-input" placeholder="電子信箱 (Email)">
+                <input type="password" id="password" class="login-input" placeholder="密碼 (至少6位數)">
+                    
+                <button class="btn-primary" onclick="handleEmailAuth()" id="btn-submit">登入</button>
+                    
+                <p style="font-size: 0.9rem; color: #666;">
+                    <span id="toggle-text">還沒有帳號？</span>
+                    <span class="text-link" onclick="toggleLoginMode()" id="toggle-btn">建立新帳號</span>
+                </p>
+            </div>
+    
+            <div class="divider">或使用其他方式</div>
+    
+            <button class="btn-google" onclick="loginWithGoogle()" style="margin-top:0;">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
-                使用 Google 登入
+                Google 登入
             </button>
-            <p style="font-size: 0.8rem; color: #999; margin-top: 20px;">資料將自動儲存於此裝置</p>
+    
+            <button class="btn-anon" onclick="loginAnonymously()">
+                👻 匿名試用 (不儲存雲端)
+            </button>
         </div>
     </div>
 
@@ -132,4 +149,5 @@
     <script src="js/script.js"></script>
 </body>
 </html>
+
 
