@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,17 +8,22 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4a90e2">
     <link rel="stylesheet" href="styles.css">
-    
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
+
 <body>
 
     <nav>
-        <h1 id="app-title">📅 我的週課表</h1>
+        <h1 id="app-title">📅 CampusMate</h1>
+
         <div id="user-info" style="display: none; align-items: center; gap: 10px;">
-            <img id="user-photo" src="" style="width: 28px; height: 28px; border-radius: 50%;">
-            <button onclick="logout()" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">
+            <span id="user-badge"
+                style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
+            <img id="user-photo" src="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+            <button onclick="logout()"
+                style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; cursor: pointer;">
                 登出
             </button>
         </div>
@@ -25,34 +31,41 @@
 
     <div id="login-overlay">
         <div class="login-card">
-             <h1 style="margin-top:0;">🎓 CampusMate</h1>
-                
+            <h1 style="margin-top:0;">🎓 歡迎使用</h1>
+
             <div id="email-form">
                 <input type="email" id="email" class="login-input" placeholder="電子信箱 (Email)">
                 <input type="password" id="password" class="login-input" placeholder="密碼 (至少6位數)">
-                    
+
                 <button class="btn-primary" onclick="handleEmailAuth()" id="btn-submit">登入</button>
-                    
+
                 <p style="font-size: 0.9rem; color: #666;">
                     <span id="toggle-text">還沒有帳號？</span>
                     <span class="text-link" onclick="toggleLoginMode()" id="toggle-btn">建立新帳號</span>
                 </p>
             </div>
-    
+
             <div class="divider">或使用其他方式</div>
-    
+
             <button class="btn-google" onclick="loginWithGoogle()" style="margin-top:0;">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
                 Google 登入
             </button>
-    
+
             <button class="btn-anon" onclick="loginAnonymously()">
-                👻 匿名 登入
+                👻 匿名試用 (不儲存雲端)
             </button>
         </div>
     </div>
 
     <div class="container">
+
+        <div class="semester-control">
+            <select id="semester-select" class="semester-select" onchange="switchSemester()">
+            </select>
+            <button class="btn-new-sem" onclick="addNewSemester()">+ 新學期</button>
+        </div>
+
         <div class="card">
             <div class="week-tabs">
                 <button class="tab-btn" onclick="switchDay(1)" id="tab-1">一</button>
@@ -71,7 +84,8 @@
                         <th width="35%">地點</th>
                     </tr>
                 </thead>
-                <tbody id="schedule-body"></tbody>
+                <tbody id="schedule-body">
+                </tbody>
             </table>
             <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button>
         </div>
@@ -90,9 +104,8 @@
                 <tbody id="grade-body"></tbody>
             </table>
             <div style="margin-top: 15px; text-align: right; font-weight: bold; color: var(--primary);">
-                總平均: <span id="average-score" style="font-size: 1.2rem;">0.0</span>
+                <span id="average-score" style="font-size: 1.1rem;">0.0</span>
             </div>
-            <!-- <button class="btn btn-add" onclick="alert('成績編輯功能即將推出！')">+ 新增成績</button> -->
             <button class="btn btn-add" onclick="openGradeModal()">+ 編輯成績</button>
         </div>
     </div>
@@ -116,19 +129,17 @@
             <div class="input-group"><label>科目</label><input type="text" id="input-subject" placeholder="輸入科目..."></div>
             <div class="input-group"><label>地點</label><input type="text" id="input-room" placeholder="輸入地點..."></div>
             <button class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button>
-            <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeEditModal()">關閉</button>
+            <button class="btn"
+                style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;"
+                onclick="closeEditModal()">關閉</button>
         </div>
     </div>
 
     <div id="grade-modal" class="modal">
         <div class="modal-content" style="text-align: left;">
             <h3 style="text-align: center; margin-top:0;">📊 編輯成績</h3>
-            
-            <div id="current-grade-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
-                </div>
-
+            <div id="current-grade-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;"></div>
             <hr style="border:0; border-top:1px dashed #ddd; margin: 15px 0;">
-
             <h4 style="margin: 0 0 10px 0; color: var(--primary);">新增一科</h4>
             <div class="input-group">
                 <label>科目名稱</label>
@@ -142,17 +153,20 @@
                 <label>分數</label>
                 <input type="number" id="input-grade-score" placeholder="例如：85">
             </div>
-
             <button class="btn" style="width: 100%; background: #333;" onclick="addGrade()">+ 加入成績單</button>
-            <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeGradeModal()">關閉</button>
+            <button class="btn"
+                style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;"
+                onclick="closeGradeModal()">關閉</button>
         </div>
     </div>
 
     <script src="js/script.js"></script>
+    <script>
+        // 註冊 PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./js/sw.js');
+        }
+    </script>
 </body>
+
 </html>
-
-
-
-
-
