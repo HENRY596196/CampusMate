@@ -1,4 +1,4 @@
-:root { 
+:root {
     --primary: #4a90e2;
     --bg: #f4f7f6;
     --card: #ffffff;
@@ -24,7 +24,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 100;
 }
 
@@ -46,7 +46,7 @@ nav h1 {
     border-radius: 12px;
     padding: 15px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 h2 {
@@ -81,7 +81,11 @@ h2 {
     transition: 0.3s;
 }
 
-.tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 /* 表格 */
 table {
@@ -89,7 +93,8 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     padding: 12px 8px;
     text-align: center;
     border-bottom: 1px solid #eee;
@@ -141,7 +146,7 @@ tr:last-child td {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -177,7 +182,14 @@ tr:last-child td {
 }
 
 /* 編輯課程列表樣式 */
-.course-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+.course-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
 .course-info {
     text-align: left;
 }
@@ -203,9 +215,13 @@ tr:last-child td {
 }
 
 /* 輸入框 */
-.input-group { margin-bottom: 15px; text-align: left; }
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
 .input-group label {
-    isplay: block;
+    display: block;
     margin-bottom: 5px;
     color: #666;
     font-size: 0.9rem;
@@ -224,10 +240,12 @@ tr:last-child td {
     display: none;
 }
 
-@keyframes popIn { 
+@keyframes popIn {
     from {
         transform: scale(0.9);
-        opacity: 0;}
+        opacity: 0;
+    }
+
     to {
         transform: scale(1);
         opacity: 1;
@@ -242,7 +260,8 @@ tr:last-child td {
     width: 100%;
     height: 100%;
     background: #f4f7f6;
-    display: flex; /* 預設顯示 */
+    display: flex;
+    /* 預設顯示 */
     justify-content: center;
     align-items: center;
     z-index: 2000;
@@ -253,7 +272,7 @@ tr:last-child td {
     padding: 40px;
     border-radius: 16px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 80%;
     max-width: 300px;
 }
@@ -286,7 +305,7 @@ tr:last-child td {
     padding: 30px;
     border-radius: 16px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     width: 85%;
     max-width: 320px;
 }
@@ -320,14 +339,22 @@ tr:last-child td {
     margin: 15px 0;
     font-size: 0.8rem;
 }
-.divider::before, .divider::after {
+
+.divider::before,
+.divider::after {
     content: "";
     flex: 1;
     height: 1px;
     background: #eee;
 }
-.divider::before { margin-right: 10px; }
-.divider::after { margin-left: 10px; }
+
+.divider::before {
+    margin-right: 10px;
+}
+
+.divider::after {
+    margin-left: 10px;
+}
 
 /* 連結樣式 */
 .text-link {
@@ -349,3 +376,34 @@ tr:last-child td {
     margin-top: 10px;
 }
 
+/* --- 學期選擇器樣式 --- */
+.semester-control {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    align-items: center;
+}
+
+.semester-select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: white;
+}
+
+.btn-new-sem {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
