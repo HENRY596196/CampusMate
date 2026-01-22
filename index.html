@@ -101,6 +101,35 @@
         </div>
     </div>
 
+    <div id="grade-modal" class="modal">
+        <div class="modal-content" style="text-align: left;">
+            <h3 style="text-align: center; margin-top:0;">📊 編輯成績</h3>
+            
+            <div id="current-grade-list" style="margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
+                </div>
+
+            <hr style="border:0; border-top:1px dashed #ddd; margin: 15px 0;">
+
+            <h4 style="margin: 0 0 10px 0; color: var(--primary);">新增一科</h4>
+            <div class="input-group">
+                <label>科目名稱</label>
+                <input type="text" id="input-grade-subject" placeholder="例如：微積分">
+            </div>
+            <div class="input-group" id="input-credit-group">
+                <label>學分</label>
+                <input type="number" id="input-grade-credit" placeholder="例如：3" value="1">
+            </div>
+            <div class="input-group">
+                <label>分數</label>
+                <input type="number" id="input-grade-score" placeholder="例如：85">
+            </div>
+
+            <button class="btn" style="width: 100%; background: #333;" onclick="addGrade()">+ 加入成績單</button>
+            <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeGradeModal()">關閉</button>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
 </body>
 </html>
+
