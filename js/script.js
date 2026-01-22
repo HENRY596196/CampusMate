@@ -1,4 +1,4 @@
-// --- 1. Firebase 設定 (保持您原本正確的設定) ---
+// --- 1. Firebase 設定 (請確認您的 Key 正確) ---
 const firebaseConfig = {
     apiKey: "AIzaSyDCjUE-uDGHuTwShun_hUkHI0OgAEGx_Zk",
     authDomain: "campusmate-aa158.firebaseapp.com",
@@ -9,7 +9,6 @@ const firebaseConfig = {
     measurementId: "G-RJBVYV11FB"
 };
 
-// 初始化 Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
@@ -22,16 +21,15 @@ let isRegisterMode = false;
 let currentDay = new Date().getDay();
 if (currentDay === 0 || currentDay === 6) currentDay = 1;
 
-// --- 學期系統變數 (新) ---
-let currentSemester = "113-2"; // 預設當前學期
-let semesterList = ["113-2"]; // 學期列表
-let allData = {}; // 存放所有學期的總資料庫
+// 學期變數
+let currentSemester = "113-2";
+let semesterList = ["113-2"];
+let allData = {};
 
-// 暫存當下顯示的資料 (會隨學期切換而變動)
+// 暫存變數
 let weeklySchedule = {};
 let gradeList = [];
 
-// 預設空白資料
 const defaultSchedule = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 
 // --- 3. 程式啟動 ---
@@ -39,8 +37,7 @@ auth.onAuthStateChanged((user) => {
     if (user) {
         currentUser = user;
         updateLoginUI(true);
-        console.log("登入成功:", user.email);
-        loadData(); // 這裡會處理學期資料載入
+        loadData();
         checkUserType();
     } else {
         currentUser = null;
@@ -57,121 +54,72 @@ function updateLoginUI(isLoggedIn) {
     if (userPhoto && currentUser) userPhoto.src = currentUser.photoURL || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 }
 
-// --- 4. 核心資料存取 (重大更新：支援多學期) ---
-
+// --- 4. 資料存取 ---
 function loadData() {
     if (!currentUser) return;
     const uid = currentUser.uid;
-    const dbKey = 'campusMate_v2_' + uid; // 使用新的儲存 Key (v2)
-
+    const dbKey = 'campusMate_v2_' + uid;
     const savedData = localStorage.getItem(dbKey);
 
     if (savedData) {
-        // 1. 如果有 v2 版本的新資料，直接讀取
         const parsed = JSON.parse(savedData);
         allData = parsed.allData || {};
         semesterList = parsed.semesterList || ["113-2"];
         currentSemester = parsed.currentSemester || semesterList[0];
     } else {
-        // 2. 自動搬家：如果沒有新資料，嘗試讀取舊版 (v1) 資料並轉移
-        console.log("偵測到舊版資料，正在進行遷移...");
         migrateOldData(uid);
     }
-
-    // 3. 根據當前選到的學期，取出對應的課表和成績放入暫存變數
     loadSemesterData(currentSemester);
-
-    // 4. 更新介面
     renderSemesterOptions();
 }
 
 function migrateOldData(uid) {
-    // 讀取舊的散亂資料
     const oldSchedule = localStorage.getItem('schedule_' + uid);
     const oldGrades = localStorage.getItem('grades_' + uid);
-
-    // 建立預設學期 (例如 113-1)
     currentSemester = "113-1";
     semesterList = ["113-1"];
-
-    // 將舊資料塞入新結構
     allData = {
         "113-1": {
             schedule: oldSchedule ? JSON.parse(oldSchedule) : JSON.parse(JSON.stringify(defaultSchedule)),
             grades: oldGrades ? JSON.parse(oldGrades) : []
         }
     };
-
-    saveData(); // 存入 v2 格式
+    saveData();
 }
 
 function saveData() {
     if (!currentUser) return;
-
-    // 1. 將當下的暫存變數，寫回總資料庫 (allData)
-    allData[currentSemester] = {
-        schedule: weeklySchedule,
-        grades: gradeList
-    };
-
-    // 2. 準備要存入 LocalStorage 的完整物件
-    const storageObj = {
-        allData: allData,
-        semesterList: semesterList,
-        currentSemester: currentSemester
-    };
-
-    // 3. 寫入
+    allData[currentSemester] = { schedule: weeklySchedule, grades: gradeList };
+    const storageObj = { allData: allData, semesterList: semesterList, currentSemester: currentSemester };
     localStorage.setItem('campusMate_v2_' + currentUser.uid, JSON.stringify(storageObj));
-
-    // 4. 重新渲染畫面
     switchDay(currentDay);
     loadGrades();
 }
 
-// 切換當前使用的資料 (不存檔，只讀取)
 function loadSemesterData(sem) {
-    if (!allData[sem]) {
-        // 如果該學期沒資料，初始化
-        allData[sem] = {
-            schedule: JSON.parse(JSON.stringify(defaultSchedule)),
-            grades: []
-        };
-    }
+    if (!allData[sem]) allData[sem] = { schedule: JSON.parse(JSON.stringify(defaultSchedule)), grades: [] };
     weeklySchedule = allData[sem].schedule;
     gradeList = allData[sem].grades;
 }
 
-// --- 5. 學期控制功能 (新增) ---
-
+// --- 5. 學期控制 (含新增的編輯與刪除) ---
 function renderSemesterOptions() {
     const select = document.getElementById('semester-select');
     select.innerHTML = '';
-
-    // 排序學期 (讓新的在上面)
     semesterList.sort().reverse();
-
     semesterList.forEach(sem => {
         const option = document.createElement('option');
         option.value = sem;
-        option.text = sem + " 學期";
+        option.text = sem;
         if (sem === currentSemester) option.selected = true;
         select.appendChild(option);
     });
 }
 
 function switchSemester() {
-    // 1. 先儲存目前學期的更動
     saveData();
-
-    // 2. 獲取使用者選擇的新學期
-    const select = document.getElementById('semester-select');
-    currentSemester = select.value;
-
-    // 3. 載入新學期資料
+    currentSemester = document.getElementById('semester-select').value;
     loadSemesterData(currentSemester);
-
-    // 4. 刷新畫面
     switchDay(currentDay);
     loadGrades();
 }
@@ -183,41 +131,73 @@ function addNewSemester() {
             alert("這個學期已經存在囉！");
             currentSemester = newSemName;
         } else {
-            // 新增學期
             semesterList.push(newSemName);
             currentSemester = newSemName;
-
-            // 初始化該學期資料
-            allData[newSemName] = {
-                schedule: JSON.parse(JSON.stringify(defaultSchedule)),
-                grades: []
-            };
+            allData[newSemName] = { schedule: JSON.parse(JSON.stringify(defaultSchedule)), grades: [] };
         }
-
         saveData();
-        renderSemesterOptions(); // 重新產生選單
-
-        // 切換過去
+        renderSemesterOptions();
         loadSemesterData(currentSemester);
         switchDay(currentDay);
         loadGrades();
     }
 }
 
-// --- 6. 登入/註冊/UI (保持原樣) ---
+// 編輯學期名稱
+function editSemester() {
+    const newName = prompt("請輸入新的學期名稱", currentSemester);
+    if (newName && newName !== currentSemester) {
+        if (semesterList.includes(newName)) {
+            alert("名稱重複！");
+            return;
+        }
+        // 1. 複製資料到新 Key
+        allData[newName] = allData[currentSemester];
+        // 2. 刪除舊 Key
+        delete allData[currentSemester];
+        // 3. 更新列表
+        const index = semesterList.indexOf(currentSemester);
+        semesterList[index] = newName;
+        // 4. 更新當前指標
+        currentSemester = newName;
 
+        saveData();
+        renderSemesterOptions();
+        alert("修改成功！");
+    }
+}
+
+// 刪除學期
+function deleteSemester() {
+    if (semesterList.length <= 1) {
+        alert("至少要保留一個學期，無法刪除！");
+        return;
+    }
+    if (confirm(`確定要刪除「${currentSemester}」的所有資料嗎？此動作無法復原！`)) {
+        // 1. 刪除資料
+        delete allData[currentSemester];
+        // 2. 移除列表
+        semesterList = semesterList.filter(s => s !== currentSemester);
+        // 3. 切換到列表中的第一個
+        currentSemester = semesterList[0];
+
+        saveData();
+        renderSemesterOptions();
+        loadSemesterData(currentSemester);
+        switchDay(currentDay);
+        loadGrades();
+    }
+}
+
+// --- 6. 登入/註冊/UI ---
 function toggleLoginMode() {
     isRegisterMode = !isRegisterMode;
     const btn = document.getElementById('btn-submit');
     const toggleBtn = document.getElementById('toggle-btn');
     const toggleText = document.getElementById('toggle-text');
-    if (isRegisterMode) {
-        btn.innerText = "註冊並登入"; toggleText.innerText = "已經有帳號？"; toggleBtn.innerText = "直接登入";
-    } else {
-        btn.innerText = "登入"; toggleText.innerText = "還沒有帳號？"; toggleBtn.innerText = "建立新帳號";
-    }
+    if (isRegisterMode) { btn.innerText = "註冊並登入"; toggleText.innerText = "已經有帳號？"; toggleBtn.innerText = "直接登入"; }
+    else { btn.innerText = "登入"; toggleText.innerText = "還沒有帳號？"; toggleBtn.innerText = "建立新帳號"; }
 }
-
 function handleEmailAuth() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -225,21 +205,15 @@ function handleEmailAuth() {
     if (isRegisterMode) auth.createUserWithEmailAndPassword(email, password).catch(e => alert(e.message));
     else auth.signInWithEmailAndPassword(email, password).catch(e => alert(e.message));
 }
-
 function loginWithGoogle() { auth.signInWithPopup(provider).catch(e => alert(e.message)); }
 function loginAnonymously() { auth.signInAnonymously().catch(e => alert(e.message)); }
 function logout() {
     if (currentUser && currentUser.isAnonymous && !confirm("⚠️ 匿名帳號登出後資料會消失，確定嗎？")) return;
     auth.signOut().then(() => window.location.reload());
 }
-
-function checkUserType() {
-    if (!userType) document.getElementById('welcome-modal').style.display = 'flex';
-    else initUI();
-}
+function checkUserType() { if (!userType) document.getElementById('welcome-modal').style.display = 'flex'; else initUI(); }
 function setUserType(type) { localStorage.setItem('userType', type); userType = type; document.getElementById('welcome-modal').style.display = 'none'; initUI(); }
 function resetIdentity() { localStorage.removeItem('userType'); userType = null; document.getElementById('welcome-modal').style.display = 'flex'; }
-
 function initUI() {
     document.getElementById('user-badge').innerText = userType === 'university' ? '大學部' : '高中部';
     const uniElements = document.querySelectorAll('.uni-only');
@@ -249,111 +223,88 @@ function initUI() {
     loadGrades();
 }
 
-// --- 7. 課表與成績邏輯 (微調適應新資料結構) ---
-
+// --- 7. 課表與成績邏輯 (更新：支援節次、老師) ---
 function switchDay(day) {
     currentDay = day;
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     const activeBtn = document.getElementById(`tab-${day}`);
     if (activeBtn) activeBtn.classList.add('active');
 
-    // 這裡讀取的 weeklySchedule 已經是 loadSemesterData 切換過的資料了
     const todayData = weeklySchedule[day] || [];
-    todayData.sort((a, b) => a.time.localeCompare(b.time));
+    // 排序優先依照節次，若無節次則依時間
+    todayData.sort((a, b) => (a.period || a.time || "").localeCompare(b.period || b.time || ""));
 
     const tbody = document.getElementById('schedule-body');
     if (tbody) {
         tbody.innerHTML = '';
         if (todayData.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="no-class">😴 無課程</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="no-class">😴 無課程</td></tr>';
         } else {
             todayData.forEach(item => {
-                const row = `<tr><td style="color:#666; font-weight:bold;">${item.time}</td><td>${item.subject}</td><td><span style="background:#f0f0f0; padding:2px 6px; border-radius:4px; font-size:0.85rem;">${item.room}</span></td></tr>`;
+                // 處理舊資料沒有 teacher/period 的情況
+                const period = item.period || "-";
+                const teacher = item.teacher || "";
+                const room = item.room || "";
+
+                const row = `
+                    <tr>
+                        <td style="color:#primary; font-weight:bold;">${period}</td>
+                        <td style="color:#666;">${item.time}</td>
+                        <td style="font-weight:bold;">${item.subject}</td>
+                        <td><span style="background:#f0f0f0; padding:2px 4px; border-radius:4px; font-size:0.8rem;">${room}</span></td>
+                        <td style="font-size:0.85rem;">${teacher}</td>
+                    </tr>
+                `;
                 tbody.innerHTML += row;
             });
         }
     }
 }
 
-function loadGrades() {
-    const tbody = document.getElementById('grade-body');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    let totalScore = 0, totalCredits = 0, earnedCredits = 0, count = 0;
-
-    // 這裡讀取的 gradeList 已經是 loadSemesterData 切換過的資料了
-    gradeList.forEach(g => {
-        const credit = parseFloat(g.credit) || 0, score = parseFloat(g.score) || 0;
-        const isPass = score >= 60;
-        const thisEarned = isPass ? credit : 0;
-        if (isPass) earnedCredits += credit;
-
-        if (userType === 'university') { totalScore += score * credit; totalCredits += credit; }
-        else { totalScore += score; count++; }
-
-        tbody.innerHTML += `<tr><td>${g.subject}</td>${userType === 'university' ? `<td>${credit}</td><td>${thisEarned}</td>` : ''} <td style="font-weight:bold; color:${isPass ? '#2ecc71' : '#e74c3c'}">${score}</td></tr>`;
-    });
-
-    let average = 0;
-    if (userType === 'university') { if (totalCredits > 0) average = totalScore / totalCredits; }
-    else { if (count > 0) average = totalScore / count; }
-
-    const summaryText = userType === 'university'
-        ? `平均: ${average.toFixed(1)} <span style="font-size:0.8rem; color:#666; margin-left:5px;">(實得 ${earnedCredits} 學分)</span>`
-        : `平均: ${average.toFixed(1)}`;
-    document.getElementById('average-score').innerHTML = summaryText;
-}
-
-// 編輯功能 (不需要大改，因為它們操作的是 weeklySchedule/gradeList 參考)
-function openEditModal() { document.getElementById('course-modal').style.display = 'flex'; renderEditList(); }
-function closeEditModal() { document.getElementById('course-modal').style.display = 'none'; }
 function renderEditList() {
     const listDiv = document.getElementById('current-course-list');
     const todayData = weeklySchedule[currentDay] || [];
     let html = '';
     todayData.forEach((item, index) => {
-        html += `<div class="course-list-item"><div class="course-info"><div class="course-name">${item.subject}</div><div class="course-time">${item.time}</div></div><button class="btn-delete" onclick="deleteCourse(${index})">刪除</button></div>`;
+        const info = `${item.time} ${item.room ? '@' + item.room : ''}`;
+        html += `<div class="course-list-item"><div class="course-info"><div class="course-name">${item.subject}</div><div class="course-time">${info}</div></div><button class="btn-delete" onclick="deleteCourse(${index})">刪除</button></div>`;
     });
     listDiv.innerHTML = html || '<p style="color:#999; text-align:center;">無課程</p>';
 }
+
 function addCourse() {
+    const period = document.getElementById('input-period').value;
     const time = document.getElementById('input-time').value;
     const sub = document.getElementById('input-subject').value;
     const room = document.getElementById('input-room').value;
-    if (time && sub) {
-        if (!weeklySchedule[currentDay]) weeklySchedule[currentDay] = [];
-        weeklySchedule[currentDay].push({ time, subject: sub, room: room || '' });
-        document.getElementById('input-time').value = ''; document.getElementById('input-subject').value = ''; document.getElementById('input-room').value = '';
-        saveData(); renderEditList();
-    } else alert('請輸入時間與科目');
-}
-function deleteCourse(index) { if (confirm('確定刪除？')) { weeklySchedule[currentDay].splice(index, 1); saveData(); renderEditList(); } }
+    const teacher = document.getElementById('input-teacher').value;
 
-function openGradeModal() {
-    document.getElementById('grade-modal').style.display = 'flex';
-    const creditGroup = document.getElementById('input-credit-group');
-    if (creditGroup) creditGroup.style.display = userType === 'university' ? 'block' : 'none';
-    renderGradeEditList();
+    if (sub && (time || period)) {
+        if (!weeklySchedule[currentDay]) weeklySchedule[currentDay] = [];
+        weeklySchedule[currentDay].push({
+            period: period || "",
+            time: time || "",
+            subject: sub,
+            room: room || "",
+            teacher: teacher || ""
+        });
+        // 清空輸入框
+        document.getElementById('input-period').value = '';
+        document.getElementById('input-time').value = '';
+        document.getElementById('input-subject').value = '';
+        document.getElementById('input-room').value = '';
+        document.getElementById('input-teacher').value = '';
+        saveData(); renderEditList();
+    } else alert('請至少輸入科目以及 (時間或節次)');
 }
+
+// 其他功能維持不變
+function openEditModal() { document.getElementById('course-modal').style.display = 'flex'; renderEditList(); }
+function closeEditModal() { document.getElementById('course-modal').style.display = 'none'; }
+function deleteCourse(index) { if (confirm('確定刪除？')) { weeklySchedule[currentDay].splice(index, 1); saveData(); renderEditList(); } }
+function openGradeModal() { document.getElementById('grade-modal').style.display = 'flex'; const g = document.getElementById('input-credit-group'); if (g) g.style.display = userType === 'university' ? 'block' : 'none'; renderGradeEditList(); }
 function closeGradeModal() { document.getElementById('grade-modal').style.display = 'none'; }
-function renderGradeEditList() {
-    const listDiv = document.getElementById('current-grade-list');
-    let html = '';
-    gradeList.forEach((item, index) => {
-        const info = userType === 'university' ? `${item.credit} 學分 | ${item.score} 分` : `${item.score} 分`;
-        html += `<div class="course-list-item"><div class="course-info"><div class="course-name">${item.subject}</div><div class="course-time">${info}</div></div><button class="btn-delete" onclick="deleteGrade(${index})">刪除</button></div>`;
-    });
-    listDiv.innerHTML = html || '<p style="color:#999; text-align:center;">目前沒有成績</p>';
-}
-function addGrade() {
-    const sub = document.getElementById('input-grade-subject').value;
-    const credit = document.getElementById('input-grade-credit').value;
-    const score = document.getElementById('input-grade-score').value;
-    if (sub && score) {
-        gradeList.push({ subject: sub, credit: parseInt(credit) || 0, score: parseInt(score) || 0 });
-        document.getElementById('input-grade-subject').value = ''; document.getElementById('input-grade-score').value = '';
-        saveData(); renderGradeEditList();
-    } else alert('請輸入科目與分數');
-}
-function deleteGrade(index) { if (confirm('確定刪除？')) { gradeList.splice(index, 1); saveData(); renderGradeEditList(); } }
+function renderGradeEditList() { const listDiv = document.getElementById('current-grade-list'); let html = ''; gradeList.forEach((item, i) => { const info = userType === 'university' ? `${item.credit}學分|${item.score}分` : `${item.score}分`; html += `<div class="course-list-item"><div class="course-info"><div class="course-name">${item.subject}</div><div class="course-time">${info}</div></div><button class="btn-delete" onclick="deleteGrade(${i})">刪除</button></div>`; }); listDiv.innerHTML = html || '<p style="color:#999; text-align:center">無成績</p>'; }
+function addGrade() { const s = document.getElementById('input-grade-subject').value; const c = document.getElementById('input-grade-credit').value; const sc = document.getElementById('input-grade-score').value; if (s && sc) { gradeList.push({ subject: s, credit: parseInt(c) || 0, score: parseInt(sc) || 0 }); document.getElementById('input-grade-subject').value = ''; document.getElementById('input-grade-score').value = ''; saveData(); renderGradeEditList(); } else alert('輸入不完整'); }
+function deleteGrade(i) { if (confirm('確定刪除？')) { gradeList.splice(i, 1); saveData(); renderGradeEditList(); } }
+function loadGrades() { const tb = document.getElementById('grade-body'); if (!tb) return; tb.innerHTML = ''; let ts = 0, tc = 0, ec = 0, c = 0; gradeList.forEach(g => { const cr = parseFloat(g.credit) || 0, sc = parseFloat(g.score) || 0, pass = sc >= 60; if (pass) ec += cr; if (userType === 'university') { ts += sc * cr; tc += cr; } else { ts += sc; c++; } tb.innerHTML += `<tr><td>${g.subject}</td>${userType === 'university' ? `<td>${cr}</td><td>${pass ? cr : 0}</td>` : ''} <td style="font-weight:bold; color:${pass ? '#2ecc71' : '#e74c3c'}">${sc}</td></tr>`; }); let avg = 0; if (userType === 'university') { if (tc > 0) avg = ts / tc; } else { if (c > 0) avg = ts / c; } document.getElementById('average-score').innerHTML = userType === 'university' ? `平均: ${avg.toFixed(1)} <span style="font-size:0.8rem; color:#666;">(實得${ec}學分)</span>` : `平均: ${avg.toFixed(1)}`; }
