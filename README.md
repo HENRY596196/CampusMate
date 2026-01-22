@@ -37,3 +37,9 @@ CampusMate/
 │   ├── script.js    # 核心邏輯 (Firebase 設定, 課表操作, 登入邏輯)
 │   └── sw.js        # Service Worker (PWA 離線快取)
 └── README.md        # 專案說明文件
+```
+📝 待辦事項 (To-Do)
+
+[ ] 新增「成績單」的編輯與儲存功能。
+[ ] 讓課程顏色可以自訂。
+[ ] 加入上課時間提醒通知。
