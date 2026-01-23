@@ -308,3 +308,19 @@ function renderGradeEditList() { const listDiv = document.getElementById('curren
 function addGrade() { const s = document.getElementById('input-grade-subject').value; const c = document.getElementById('input-grade-credit').value; const sc = document.getElementById('input-grade-score').value; if (s && sc) { gradeList.push({ subject: s, credit: parseInt(c) || 0, score: parseInt(sc) || 0 }); document.getElementById('input-grade-subject').value = ''; document.getElementById('input-grade-score').value = ''; saveData(); renderGradeEditList(); } else alert('輸入不完整'); }
 function deleteGrade(i) { if (confirm('確定刪除？')) { gradeList.splice(i, 1); saveData(); renderGradeEditList(); } }
 function loadGrades() { const tb = document.getElementById('grade-body'); if (!tb) return; tb.innerHTML = ''; let ts = 0, tc = 0, ec = 0, c = 0; gradeList.forEach(g => { const cr = parseFloat(g.credit) || 0, sc = parseFloat(g.score) || 0, pass = sc >= 60; if (pass) ec += cr; if (userType === 'university') { ts += sc * cr; tc += cr; } else { ts += sc; c++; } tb.innerHTML += `<tr><td>${g.subject}</td>${userType === 'university' ? `<td>${cr}</td><td>${pass ? cr : 0}</td>` : ''} <td style="font-weight:bold; color:${pass ? '#2ecc71' : '#e74c3c'}">${sc}</td></tr>`; }); let avg = 0; if (userType === 'university') { if (tc > 0) avg = ts / tc; } else { if (c > 0) avg = ts / c; } document.getElementById('average-score').innerHTML = userType === 'university' ? `平均: ${avg.toFixed(1)} <span style="font-size:0.8rem; color:#666;">(實得${ec}學分)</span>` : `平均: ${avg.toFixed(1)}`; }
+
+// --- 8. 分頁切換功能 ---
+function switchTab(tabName) {
+  // 切換顯示區塊
+  document.getElementById('view-home').style.display = tabName === 'home' ? 'block' : 'none';
+  document.getElementById('view-info').style.display = tabName === 'info' ? 'block' : 'none';
+
+  // 更新按鈕狀態
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('btn-' + tabName).classList.add('active');
+
+  // 如果切換回首頁，建議重新調整一下畫面 (例如確保課表顯示正確)
+  if (tabName === 'home') {
+    switchDay(currentDay);
+  }
+}
