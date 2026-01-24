@@ -400,3 +400,54 @@ tr:last-child td {
     margin-top: 20px;
     transition: 0.3s;
 }
+
+/* 底部導覽列 */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    border-top: 1px solid #eee;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 900;
+    padding-bottom: env(safe-area-inset-bottom);
+    /* 支援手機底部安全區域 */
+}
+
+.nav-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+    font-size: 0.75rem;
+    color: #999;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: center;
+}
+
+.nav-btn.active {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* 調整 Container 底部間距，防止內容被 nav 擋住 */
+.container {
+    padding: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 100px;
+}
+
+/* 優化資訊頁清單樣式 */
+#view-info ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+#view-info li {
+    margin-bottom: 8px;
+    color: #555;
+}
