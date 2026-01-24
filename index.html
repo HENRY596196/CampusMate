@@ -7,7 +7,7 @@
   <title>學霸課表</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4a90e2">
-  <link rel="stylesheet" href="js01+css01/a.css">
+  <link rel="stylesheet" href="styles.css">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
@@ -101,7 +101,7 @@
     <div id="view-info" style="display: none;">
       <div class="card">
         <h2>ℹ️ 關於 CampusMate</h2>
-        <div style="padding: 10px; line-height: 1.6;">
+        <div id="info-content" style="padding: 10px; line-height: 1.6;">
           <p>這是一個專為學生設計的課表與成績管理工具。</p>
           <h4 style="color: var(--primary);">使用說明</h4>
           <ul>
@@ -111,6 +111,14 @@
           </ul>
           <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
           <p style="font-size:0.9rem; color:#888;">版本：v2.0.0<br>開發者：CampusMate Team</p>
+        </div>
+
+        <!-- 管理者工具 -->
+        <div id="admin-panel" style="display: none; border-top: 2px dashed #ccc; margin-top: 15px; padding-top: 15px;">
+          <h4 style="color: var(--danger);">🛠️ 管理者工具</h4>
+          <textarea id="admin-new-info" style="width:100%; height:80px; margin-bottom:10px;"
+            placeholder="輸入新的公告或資訊..."></textarea>
+          <button class="btn" onclick="addAdminInfo()" style="background: var(--danger);">發布公告</button>
         </div>
       </div>
     </div>
@@ -174,7 +182,7 @@
     </div>
   </div>
 
-  <script src="js01+css01/a.js"></script>
+  <script src="js/script.js"></script>
   <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./js/sw.js'); }</script>
 </body>
 
