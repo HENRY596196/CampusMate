@@ -21,6 +21,9 @@ let isRegisterMode = false;
 let currentDay = new Date().getDay();
 if (currentDay === 0 || currentDay === 6) currentDay = 1;
 
+// ---【新增】在這裡加入管理員 ID ---
+const ADMIN_UID = "RGGuHfw9moVkGsKTMqdRPZR6Kwu2";
+
 // 學期變數
 let currentSemester = "113-2";
 let semesterList = ["113-2"];
@@ -42,6 +45,9 @@ auth.onAuthStateChanged((user) => {
     } else {
         currentUser = null;
         updateLoginUI(false);
+
+        // ---【新增/插入】登出時隱藏管理介面 ---
+        document.getElementById('admin-panel').style.display = 'none';
     }
 });
 
@@ -309,18 +315,45 @@ function addGrade() { const s = document.getElementById('input-grade-subject').v
 function deleteGrade(i) { if (confirm('確定刪除？')) { gradeList.splice(i, 1); saveData(); renderGradeEditList(); } }
 function loadGrades() { const tb = document.getElementById('grade-body'); if (!tb) return; tb.innerHTML = ''; let ts = 0, tc = 0, ec = 0, c = 0; gradeList.forEach(g => { const cr = parseFloat(g.credit) || 0, sc = parseFloat(g.score) || 0, pass = sc >= 60; if (pass) ec += cr; if (userType === 'university') { ts += sc * cr; tc += cr; } else { ts += sc; c++; } tb.innerHTML += `<tr><td>${g.subject}</td>${userType === 'university' ? `<td>${cr}</td><td>${pass ? cr : 0}</td>` : ''} <td style="font-weight:bold; color:${pass ? '#2ecc71' : '#e74c3c'}">${sc}</td></tr>`; }); let avg = 0; if (userType === 'university') { if (tc > 0) avg = ts / tc; } else { if (c > 0) avg = ts / c; } document.getElementById('average-score').innerHTML = userType === 'university' ? `平均: ${avg.toFixed(1)} <span style="font-size:0.8rem; color:#666;">(實得${ec}學分)</span>` : `平均: ${avg.toFixed(1)}`; }
 
+
 // --- 8. 分頁切換功能 ---
 function switchTab(tabName) {
-  // 切換顯示區塊
-  document.getElementById('view-home').style.display = tabName === 'home' ? 'block' : 'none';
-  document.getElementById('view-info').style.display = tabName === 'info' ? 'block' : 'none';
+    // 切換顯示區塊
+    document.getElementById('view-home').style.display = tabName === 'home' ? 'block' : 'none';
+    document.getElementById('view-info').style.display = tabName === 'info' ? 'block' : 'none';
 
-  // 更新按鈕狀態
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById('btn-' + tabName).classList.add('active');
+    // 更新按鈕狀態
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn-' + tabName).classList.add('active');
 
-  // 如果切換回首頁，建議重新調整一下畫面 (例如確保課表顯示正確)
-  if (tabName === 'home') {
-    switchDay(currentDay);
-  }
+    // 如果切換回首頁，建議重新調整一下畫面 (例如確保課表顯示正確)
+    if (tabName === 'home') {
+        switchDay(currentDay);
+    }
+}
+
+// ★★★【新增】全新的管理員檢查函式 ★★★
+function checkAdminStatus() {
+    // 取得 HTML 裡預先寫好的管理員區塊 (記得 index.html 也要加對應的 div)
+    const adminPanel = document.getElementById('admin-panel');
+
+    // 如果區塊不存在防呆一下，避免報錯
+    if (!adminPanel) return;
+
+    // 比對目前登入者的 UID 是否等於我們設定的 ADMIN_UID
+    if (currentUser && currentUser.uid === ADMIN_UID) {
+        adminPanel.style.display = 'block'; // 是本人，顯示管理介面
+    } else {
+        adminPanel.style.display = 'none';  // 不是本人，隱藏
+    }
+}
+
+// ---【新增】發布公告的函式 (範例) ---
+function addAdminInfo() {
+    const newInfoText = document.getElementById('admin-new-info').value;
+    if (!newInfoText) return alert("請輸入內容");
+
+    // 這裡實作將內容存入資料庫的邏輯
+    // 因為目前是用 LocalStorage，這裡僅示範邏輯
+    alert("公告已發布 (模擬)：" + newInfoText);
 }
