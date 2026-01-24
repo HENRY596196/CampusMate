@@ -42,6 +42,8 @@ auth.onAuthStateChanged((user) => {
         updateLoginUI(true);
         loadData();
         checkUserType();
+
+        checkAdminStatus(); // --- 當為管理者時，叫出來！ ---
     } else {
         currentUser = null;
         updateLoginUI(false);
