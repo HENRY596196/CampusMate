@@ -22,7 +22,7 @@ let currentDay = new Date().getDay();
 if (currentDay === 0 || currentDay === 6) currentDay = 1;
 
 // ---【新增】在這裡加入管理員 ID ---
-const ADMIN_UID = "RGGuHfw9moVkGsKTMqdRPZR6Kwu2";
+const ADMIN_UID = "yh2GM8FKn6Q4oXXPnDhqBr6SFOw1";
 
 // 學期變數
 let currentSemester = "113-2";
