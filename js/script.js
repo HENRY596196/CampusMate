@@ -434,15 +434,19 @@ function loadGrades() {
 
 // --- 8. 分頁切換功能 ---
 function switchTab(tabName) {
-    // 切換顯示區塊
-    document.getElementById('view-home').style.display = tabName === 'home' ? 'block' : 'none';
-    document.getElementById('view-info').style.display = tabName === 'info' ? 'block' : 'none';
+    // 隱藏所有頁面
+    document.getElementById('view-home').style.display = 'none';
+    document.getElementById('view-info').style.display = 'none';
+    document.getElementById('view-settings').style.display = 'none'; // 新增這行
+
+    // 顯示目標頁面
+    document.getElementById('view-' + tabName).style.display = 'block';
 
     // 更新按鈕狀態
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById('btn-' + tabName).classList.add('active');
 
-    // 如果切換回首頁，建議重新調整一下畫面 (例如確保課表顯示正確)
+    // 特殊處理
     if (tabName === 'home') {
         switchDay(currentDay);
     }
