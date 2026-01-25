@@ -121,6 +121,31 @@
         </div>
       </div>
     </div>
+
+    <div id="view-settings" style="display: none;">
+      <div class="card">
+        <h2>⚙️ 設定</h2>
+        
+        <h4 style="color: var(--primary); margin-bottom: 5px;">一般設定</h4>
+        <div class="settings-list">
+          <div class="settings-item" onclick="resetIdentity()">
+            <div><span class="settings-icon">🎓</span>切換身分 (高中/大學)</div>
+            <span class="settings-arrow">➤</span>
+          </div>
+          </div>
+
+        <h4 style="color: var(--danger); margin-bottom: 5px; margin-top: 20px;">帳號管理</h4>
+        <div class="settings-list">
+           <div class="settings-item" onclick="logout()" style="color: var(--danger);">
+            <div><span class="settings-icon">🚪</span>登出帳號</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; color: #aaa; font-size: 0.8rem; margin-top: 20px;">
+        CampusMate Settings
+      </div>
+    </div>
   </div>
 
   <div class="bottom-nav">
@@ -129,6 +154,9 @@
     </button>
     <button class="nav-btn" onclick="switchTab('info')" id="btn-info">
       <span style="font-size: 1.2rem;">ℹ️</span><br>資訊
+    </button>
+    <button class="nav-btn" onclick="switchTab('settings')" id="btn-settings">
+      <span style="font-size: 1.2rem;">⚙️</span><br>設定
     </button>
   </div>
 
