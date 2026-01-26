@@ -15,11 +15,18 @@ function loadData() {
     }
     loadSemesterData(currentSemester);
     renderSemesterOptions();
+
+    // === 初始載入觸發 (確保介面同步) ===
+    // 1. 根據課表建立選單選項
+    if (typeof updateExamSubjectOptions === 'function') updateExamSubjectOptions();
+    // 2. 嘗試渲染目前選中科目的成績 (若無選中則顯示提示)
+    if (typeof renderRegularExams === 'function') renderRegularExams();
+    if (typeof renderMidtermExams === 'function') renderMidtermExams();
 }
 
 function saveData() {
     if (!currentUser) return;
-    // === NEW: 將 regularExams 和 midtermExams 一併存入 ===
+    // === 將 regularExams 和 midtermExams 一併存入 ===
     allData[currentSemester] = { 
         schedule: weeklySchedule, 
         grades: gradeList,
@@ -38,6 +45,10 @@ function saveData() {
     switchDay(currentDay);
     loadGrades();
     // (之後這裡會加入更新小考介面的函式)
+
+    // 同步更新小考/段考介面 (確保新增資料後畫面不脫節)
+    if (typeof renderRegularExams === 'function') renderRegularExams();
+    if (typeof renderMidtermExams === 'function') renderMidtermExams();
 }
 
 function loadSemesterData(sem) {
@@ -45,7 +56,7 @@ function loadSemesterData(sem) {
     if (!allData[sem]) allData[sem] = {
         schedule: JSON.parse(JSON.stringify(defaultSchedule)),
         grades: [],
-        // === NEW: 初始化新欄位 ===
+        // === 初始化新欄位 ===
         regularExams: {},
         midtermExams: {}
     };
