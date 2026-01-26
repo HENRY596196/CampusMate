@@ -7,7 +7,7 @@
   <title>學霸課表</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4a90e2">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
@@ -18,7 +18,6 @@
       <span id="user-badge"
         style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"></span>
       <img id="user-photo" src="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
-
     </div>
   </nav>
 
@@ -182,7 +181,8 @@
       <div class="input-group"><label>地點</label><input type="text" id="input-room" placeholder="輸入地點..."></div>
       <div class="input-group"><label>老師 (選填)</label><input type="text" id="input-teacher" placeholder="輸入老師...">
       </div>
-      <button class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button>
+      <!-- <button class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button> -->
+       <button id="btn-add-course" class="btn" style="width: 100%; background: #333;" onclick="addCourse()">+ 加入清單</button>
       <button class="btn"
         style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;"
         onclick="closeEditModal()">關閉</button>
@@ -201,7 +201,8 @@
           placeholder="例如：3" value="1"></div>
       <div class="input-group"><label>分數</label><input type="number" id="input-grade-score" placeholder="例如：85">
       </div>
-      <button class="btn" style="width: 100%; background: #333;" onclick="addGrade()">+ 加入成績單</button>
+      <!-- <button class="btn" style="width: 100%; background: #333;" onclick="addGrade()">+ 加入成績單</button> -->
+      <button id="btn-add-grade" class="btn" style="width: 100%; background: #333;" onclick="addGrade()">+ 加入成績單</button>
       <button class="btn"
         style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;"
         onclick="closeGradeModal()">關閉</button>
@@ -225,6 +226,4 @@
 </body>
 
 </html>
-
-
 
