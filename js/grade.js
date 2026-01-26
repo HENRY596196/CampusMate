@@ -169,3 +169,67 @@ function updateExamSubjectOptions() {
     if (regVal) regSelect.value = regVal;
     if (midVal) midSelect.value = midVal;
 }
+
+// --- 1. 監聽下拉選單變動 ---
+// 當選單切換時，觸發對應的渲染函式
+document.addEventListener('change', (e) => {
+    if (e.target.id === 'regular-subject-select') {
+        renderRegularExams();
+    } else if (e.target.id === 'midterm-subject-select') {
+        renderMidtermExams();
+    }
+});
+
+// --- 2. 渲染平常考表格 ---
+function renderRegularExams() {
+    const subject = document.getElementById('regular-subject-select').value;
+    const tbody = document.getElementById('regular-exam-body');
+    if (!tbody) return;
+
+    // 如果沒選科目
+    if (!subject) {
+        tbody.innerHTML = '<tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>';
+        return;
+    }
+
+    // 從 state.js 的 regularExams 變數抓取該科資料
+    const scores = regularExams[subject] || [];
+    
+    if (scores.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" class="no-class">📭 目前無紀錄</td></tr>';
+    } else {
+        tbody.innerHTML = scores.map((item, index) => `
+            <tr>
+                <td>${item.title}</td>
+                <td style="font-weight:bold; color: var(--primary);">${item.score}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+// --- 3. 渲染段考表格 ---
+function renderMidtermExams() {
+    const subject = document.getElementById('midterm-subject-select').value;
+    const tbody = document.getElementById('midterm-exam-body');
+    if (!tbody) return;
+
+    // 如果沒選科目
+    if (!subject) {
+        tbody.innerHTML = '<tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>';
+        return;
+    }
+
+    // 從 state.js 的 midtermExams 變數抓取該科資料
+    const scores = midtermExams[subject] || [];
+    
+    if (scores.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" class="no-class">📭 目前無紀錄</td></tr>';
+    } else {
+        tbody.innerHTML = scores.map((item, index) => `
+            <tr>
+                <td>${item.title}</td>
+                <td style="font-weight:bold; color: var(--primary);">${item.score}</td>
+            </tr>
+        `).join('');
+    }
+}
