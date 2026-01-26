@@ -25,7 +25,7 @@
       <img id="user-photo" src="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
     </div>
   </nav>
-
+  <!-- 登入頁 -->
   <div id="login-overlay">
     <div class="login-card">
       <h1 style="margin-top:0;">🎓 歡迎使用</h1>
@@ -45,17 +45,18 @@
       <button class="btn-anon" onclick="loginAnonymously()">👻 匿名試用</button>
     </div>
   </div>
-
+  <!-- 頁面製作 -->
   <div class="container">
 
     <div id="view-home">
+      <!-- 編輯學期 -->
       <div class="semester-control">
         <select id="semester-select" class="semester-select" onchange="switchSemester()"></select>
         <button class="btn-icon" onclick="editSemester()">✏️</button>
         <button class="btn-icon btn-delete-sem" onclick="deleteSemester()" style="color: #e74c3c;">🗑️</button>
         <button class="btn-new-sem" onclick="addNewSemester()">+ 新學期</button>
       </div>
-
+      <!-- 課表 -->
       <div class="card">
         <div class="week-tabs">
           <button class="tab-btn" onclick="switchDay(1)" id="tab-1">一</button>
@@ -79,7 +80,41 @@
         </table>
         <button class="btn btn-add" onclick="openEditModal()">+ 編輯本日課程</button>
       </div>
-
+      <!-- 平常考成績 -->
+      <div class="card">
+        <h2>📝 平常考成績</h2>
+        <table id="regular-exam-table">
+          <thead>
+            <tr>
+              <th width="30%">科目</th>
+              <th width="40%">測驗內容</th>
+              <th width="30%">分數</th>
+            </tr>
+          </thead>
+          <tbody id="regular-exam-body">
+            <tr><td colspan="3" class="no-class">🚧 功能建置中...</td></tr>
+          </tbody>
+        </table>
+        <button class="btn btn-add" style="opacity: 0.6; cursor: not-allowed;">+ 登記平常考 (開發中)</button>
+      </div>
+      <!-- 段考成績 -->
+      <div class="card">
+        <h2>🏆 段考成績</h2>
+        <table id="midterm-exam-table">
+          <thead>
+            <tr>
+              <th width="30%">科目</th>
+              <th width="40%">段考名稱</th>
+              <th width="30%">分數</th>
+            </tr>
+          </thead>
+          <tbody id="midterm-exam-body">
+             <tr><td colspan="3" class="no-class">🚧 功能建置中...</td></tr>
+          </tbody>
+        </table>
+        <button class="btn btn-add" style="opacity: 0.6; cursor: not-allowed;">+ 登記段考 (開發中)</button>
+      </div>
+      <!-- 成績單 -->
       <div class="card">
         <h2>📊 成績單</h2>
         <table id="grade-table">
@@ -99,8 +134,9 @@
         <button class="btn btn-add" onclick="openGradeModal()">+ 編輯成績</button>
       </div>
     </div>
-
+    <!-- 資訊 -->
     <div id="view-info" style="display: none;">
+      <!-- 關於 -->
       <div class="card">
         <h2>ℹ️ 關於 CampusMate</h2>
         <div id="info-content" style="padding: 10px; line-height: 1.6;">
@@ -124,18 +160,17 @@
         </div>
       </div>
     </div>
-
+    <!-- 設定 -->
     <div id="view-settings" style="display: none;">
       <div class="card">
         <h2>⚙️ 設定</h2>
-        
         <h4 style="color: var(--primary); margin-bottom: 5px;">一般設定</h4>
         <div class="settings-list">
           <div class="settings-item" onclick="resetIdentity()">
             <div><span class="settings-icon">🎓</span>切換身分 (高中/大學)</div>
             <span class="settings-arrow">➤</span>
           </div>
-          </div>
+        </div>
 
         <h4 style="color: var(--danger); margin-bottom: 5px; margin-top: 20px;">帳號管理</h4>
         <div class="settings-list">
@@ -150,7 +185,7 @@
       </div>
     </div>
   </div>
-
+  <!-- 尾端製作 -->
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchTab('home')" id="btn-home">
       <span style="font-size: 1.2rem;">🏠</span><br>首頁
@@ -162,7 +197,7 @@
       <span style="font-size: 1.2rem;">⚙️</span><br>設定
     </button>
   </div>
-
+  <!-- 身分選擇 -->
   <div id="welcome-modal" class="modal">
     <div class="modal-content">
       <h3>🎓 歡迎使用</h3>
@@ -171,7 +206,7 @@
       <button class="modal-btn" onclick="setUserType('university')">我是大學生</button>
     </div>
   </div>
-
+  <!-- 加入課程 -->
   <div id="course-modal" class="modal">
     <div class="modal-content" style="text-align: left;">
       <h3 style="text-align: center; margin-top:0;">✏️ 編輯課程</h3>
@@ -193,7 +228,7 @@
         onclick="closeEditModal()">關閉</button>
     </div>
   </div>
-
+  <!-- 加入成績 -->
   <div id="grade-modal" class="modal">
     <div class="modal-content" style="text-align: left;">
       <h3 style="text-align: center; margin-top:0;">📊 編輯成績</h3>
@@ -231,6 +266,5 @@
 </body>
 
 </html>
-
 
 
