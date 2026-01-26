@@ -47,7 +47,7 @@
   </div>
   <!-- 頁面製作 -->
   <div class="container">
-
+    <!-- 首頁 -->
     <div id="view-home">
       <!-- 編輯學期 -->
       <div class="semester-control">
@@ -82,34 +82,46 @@
       </div>
       <!-- 平常考成績 -->
       <div class="card">
-        <h2>📝 平常考成績</h2>
+        <h2>
+            <span>📝 平常考成績</span>
+            <select id="regular-subject-select" style="font-size: 0.9rem; padding: 4px 8px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="" disabled selected>選擇科目</option>
+                <option value="math">微積分 (範例)</option>
+                <option value="eng">英文 (範例)</option>
+            </select>
+        </h2>
         <table id="regular-exam-table">
           <thead>
             <tr>
-              <th width="30%">科目</th>
-              <th width="40%">測驗內容</th>
-              <th width="30%">分數</th>
+              <th width="60%">測驗內容</th>
+              <th width="40%">分數</th>
             </tr>
           </thead>
           <tbody id="regular-exam-body">
-            <tr><td colspan="3" class="no-class">🚧 功能建置中...</td></tr>
+            <tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>
           </tbody>
         </table>
         <button class="btn btn-add" style="opacity: 0.6; cursor: not-allowed;">+ 登記平常考 (開發中)</button>
       </div>
       <!-- 段考成績 -->
       <div class="card">
-        <h2>🏆 段考成績</h2>
+        <h2>
+            <span>🏆 段考成績</span>
+            <select id="midterm-subject-select" style="font-size: 0.9rem; padding: 4px 8px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="" disabled selected>選擇科目</option>
+                <option value="math">微積分 (範例)</option>
+                <option value="eng">英文 (範例)</option>
+            </select>
+        </h2>
         <table id="midterm-exam-table">
           <thead>
             <tr>
-              <th width="30%">科目</th>
-              <th width="40%">段考名稱</th>
-              <th width="30%">分數</th>
+              <th width="60%">段考名稱</th>
+              <th width="40%">分數</th>
             </tr>
           </thead>
           <tbody id="midterm-exam-body">
-             <tr><td colspan="3" class="no-class">🚧 功能建置中...</td></tr>
+             <tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>
           </tbody>
         </table>
         <button class="btn btn-add" style="opacity: 0.6; cursor: not-allowed;">+ 登記段考 (開發中)</button>
