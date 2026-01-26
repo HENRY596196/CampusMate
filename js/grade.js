@@ -1,40 +1,48 @@
 let editingGradeIndex = -1;
 
+// 1. 修改 loadGrades：統一用加權計算，並顯示 4 個欄位
 function loadGrades() {
     const tb = document.getElementById('grade-body');
     if (!tb) return;
     tb.innerHTML = '';
     let ts = 0, tc = 0, ec = 0, c = 0;
+    
     gradeList.forEach(g => {
-        const cr = parseFloat(g.credit) || 0,
+        // 確保有學分 (預設為 1，避免除以 0)
+        const cr = parseFloat(g.credit) || 1,
             sc = parseFloat(g.score) || 0,
             pass = sc >= 60;
 
         if (pass) ec += cr;
-        if (userType === 'university') {
-            ts += sc * cr;
-            tc += cr;
-        } else {
-            ts += sc; c++;
-        }
-        tb.innerHTML += `<tr><td>${g.subject}</td>${userType === 'university' ? `<td>${cr}</td><td>${pass ? cr : 0}</td>` : ''} <td style="font-weight:bold; color:${pass ? '#2ecc71' : '#e74c3c'}">${sc}</td></tr>`;
+        
+        // --- 核心修改：所有人一律使用加權平均 ---
+        ts += sc * cr;  // 總積點 (分數 * 學分)
+        tc += cr;       // 總學分
+        
+        // --- 顯示：所有人一律顯示 4 個欄位 (科目, 學分, 實得, 分數) ---
+        tb.innerHTML += `<tr>
+            <td>${g.subject}</td>
+            <td>${cr}</td>
+            <td>${pass ? cr : 0}</td>
+            <td style="font-weight:bold; color:${pass ? '#2ecc71' : '#e74c3c'}">${sc}</td>
+        </tr>`;
     }); 
     
+    // 計算加權平均
     let avg = 0; 
-    if (userType === 'university') { if (tc > 0) avg = ts / tc; } 
-    else { if (c > 0) avg = ts / c; } 
+    if (tc > 0) avg = ts / tc; 
     
-    // 顯示平均分數
-    document.getElementById('average-score').innerHTML = userType === 'university' ? `平均: ${avg.toFixed(1)} <span style="font-size:0.8rem; color:#666;">(實得${ec}學分)</span>` : `平均: ${avg.toFixed(1)}`;
-
-    // updateExamSubjectOptions();
+    // 顯示結果
+    document.getElementById('average-score').innerHTML = `加權平均: ${avg.toFixed(1)} <span style="font-size:0.8rem; color:#666;">(實得${ec}學分)</span>`;
 }
 
+// 2. 修改 renderGradeEditList：修改清單中也顯示學分
 function renderGradeEditList() {
     const listDiv = document.getElementById('current-grade-list');
     let html = ''; 
     gradeList.forEach((item, i) => {
-        const info = userType === 'university' ? `${item.credit}學分|${item.score}分` : `${item.score}分`;
+        // 統一顯示格式：學分 | 分數
+        const info = `${item.credit}學分 | ${item.score}分`;
         html += `
         <div class="course-list-item">
             <div class="course-info">
@@ -113,15 +121,17 @@ function deleteGrade(i) {
     }
 }
 
+// 3. 修改 openGradeModal：開啟視窗時，永遠顯示學分輸入框
 function openGradeModal() {
     document.getElementById('grade-modal').style.display = 'flex';
-    const g = document.getElementById('input-credit-group');
-    if (g) g.style.display = userType === 'university' ? 'block' : 'none';
     
-    resetGradeInput(); // 確保重置
+    // 強制顯示學分輸入框
+    const g = document.getElementById('input-credit-group');
+    if (g) g.style.display = 'block'; 
+    
+    resetGradeInput(); 
     renderGradeEditList();
 }
-
 function closeGradeModal() {
     document.getElementById('grade-modal').style.display = 'none';
     resetGradeInput();
