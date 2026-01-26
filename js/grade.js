@@ -180,56 +180,164 @@ document.addEventListener('change', (e) => {
     }
 });
 
-// --- 2. 渲染平常考表格 ---
 function renderRegularExams() {
     const subject = document.getElementById('regular-subject-select').value;
     const tbody = document.getElementById('regular-exam-body');
     if (!tbody) return;
 
-    // 如果沒選科目
     if (!subject) {
         tbody.innerHTML = '<tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>';
         return;
     }
 
-    // 從 state.js 的 regularExams 變數抓取該科資料
     const scores = regularExams[subject] || [];
     
     if (scores.length === 0) {
         tbody.innerHTML = '<tr><td colspan="2" class="no-class">📭 目前無紀錄</td></tr>';
     } else {
+        // 加入刪除按鈕 (🗑️)
         tbody.innerHTML = scores.map((item, index) => `
             <tr>
-                <td>${item.title}</td>
+                <td style="text-align:left; padding-left:10px;">
+                    ${item.title}
+                    <span onclick="deleteRegularExam(${index})" style="cursor:pointer; color:#e74c3c; margin-left:5px; font-size:0.8rem;">🗑️</span>
+                </td>
                 <td style="font-weight:bold; color: var(--primary);">${item.score}</td>
             </tr>
         `).join('');
     }
 }
 
-// --- 3. 渲染段考表格 ---
 function renderMidtermExams() {
     const subject = document.getElementById('midterm-subject-select').value;
     const tbody = document.getElementById('midterm-exam-body');
     if (!tbody) return;
 
-    // 如果沒選科目
     if (!subject) {
         tbody.innerHTML = '<tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>';
         return;
     }
 
-    // 從 state.js 的 midtermExams 變數抓取該科資料
     const scores = midtermExams[subject] || [];
     
     if (scores.length === 0) {
         tbody.innerHTML = '<tr><td colspan="2" class="no-class">📭 目前無紀錄</td></tr>';
     } else {
+        // 加入刪除按鈕 (🗑️)
         tbody.innerHTML = scores.map((item, index) => `
             <tr>
-                <td>${item.title}</td>
+                <td style="text-align:left; padding-left:10px;">
+                    ${item.title}
+                    <span onclick="deleteMidtermExam(${index})" style="cursor:pointer; color:#e74c3c; margin-left:5px; font-size:0.8rem;">🗑️</span>
+                </td>
                 <td style="font-weight:bold; color: var(--primary);">${item.score}</td>
             </tr>
         `).join('');
+    }
+}
+
+
+// 負責處理視窗開關、資料新增與刪除，並會呼叫 data.js 中的 saveData() 來儲存資料
+
+// --- 平常考相關功能 ---
+function openRegularModal() {
+    const subject = document.getElementById('regular-subject-select').value;
+    if (!subject) {
+        alert("請先在上方選單選擇一個科目！");
+        return;
+    }
+    // 顯示目前科目名稱
+    document.getElementById('modal-regular-subject-name').innerText = subject;
+    // 清空輸入框
+    document.getElementById('input-regular-name').value = '';
+    document.getElementById('input-regular-score').value = '';
+    // 開啟視窗
+    document.getElementById('regular-exam-modal').style.display = 'flex';
+}
+
+function closeRegularModal() {
+    document.getElementById('regular-exam-modal').style.display = 'none';
+}
+
+function addRegularExam() {
+    const subject = document.getElementById('regular-subject-select').value;
+    const name = document.getElementById('input-regular-name').value;
+    const score = document.getElementById('input-regular-score').value;
+
+    if (!name || !score) {
+        alert("請輸入名稱和分數");
+        return;
+    }
+
+    // 確保該科目的陣列存在
+    if (!regularExams[subject]) regularExams[subject] = [];
+
+    // 新增資料
+    regularExams[subject].push({
+        title: name,
+        score: parseInt(score) || 0
+    });
+
+    // 儲存並更新畫面
+    saveData(); 
+    closeRegularModal();
+    renderRegularExams(); // 重新渲染列表
+}
+
+function deleteRegularExam(index) {
+    const subject = document.getElementById('regular-subject-select').value;
+    if (confirm("確定要刪除這筆成績嗎？")) {
+        regularExams[subject].splice(index, 1);
+        saveData();
+        renderRegularExams();
+    }
+}
+
+// --- 段考相關功能 ---
+
+function openMidtermModal() {
+    const subject = document.getElementById('midterm-subject-select').value;
+    if (!subject) {
+        alert("請先在上方選單選擇一個科目！");
+        return;
+    }
+    document.getElementById('modal-midterm-subject-name').innerText = subject;
+    document.getElementById('input-midterm-name').value = '';
+    document.getElementById('input-midterm-score').value = '';
+    document.getElementById('midterm-exam-modal').style.display = 'flex';
+}
+
+function closeMidtermModal() {
+    document.getElementById('midterm-exam-modal').style.display = 'none';
+}
+
+function addMidtermExam() {
+    const subject = document.getElementById('midterm-subject-select').value;
+    const name = document.getElementById('input-midterm-name').value;
+    const score = document.getElementById('input-midterm-score').value;
+
+    if (!name || !score) {
+        alert("請輸入名稱和分數");
+        return;
+    }
+
+    if (!midtermExams[subject]) midtermExams[subject] = [];
+
+    midtermExams[subject].push({
+        title: name,
+        score: parseInt(score) || 0
+    });
+
+    saveData();
+    closeMidtermModal();
+    renderMidtermExams();
+}
+
+function deleteMidtermExam(index) {
+    const subject = document.getElementById('midterm-subject-select').value;
+    if (confirm("確定要刪除這筆成績嗎？")) {
+        midtermExams[subject].splice(index, 1);
+        saveData();
+        renderMidtermExams();
     }
 }
