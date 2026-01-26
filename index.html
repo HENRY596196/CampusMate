@@ -124,7 +124,7 @@
              <tr><td colspan="2" class="no-class">👈 請先選擇科目</td></tr>
           </tbody>
         </table>
-        <button class="btn btn-add" onclick="openRegularModal()">+ 登記段考</button>
+        <button class="btn btn-add" onclick="openMidtermModal()">+ 登記段考</button>
       </div>
       <!-- 成績單 -->
       <div class="card">
@@ -261,6 +261,44 @@
     </div>
   </div>
 
+  <div id="regular-exam-modal" class="modal">
+    <div class="modal-content" style="text-align: left;">
+      <h3 style="text-align: center; margin-top:0;">📝 新增平常考</h3>
+      <p style="text-align: center; color: #666;">科目：<span id="modal-regular-subject-name" style="font-weight: bold; color: var(--primary);"></span></p>
+      
+      <div class="input-group">
+        <label>測驗名稱</label>
+        <input type="text" id="input-regular-name" placeholder="例如：第一次小考、Unit 1">
+      </div>
+      <div class="input-group">
+        <label>分數</label>
+        <input type="number" id="input-regular-score" placeholder="例如：85">
+      </div>
+      
+      <button class="btn" style="width: 100%; background: #333;" onclick="addRegularExam()">+ 確定新增</button>
+      <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeRegularModal()">關閉</button>
+    </div>
+  </div>
+
+  <div id="midterm-exam-modal" class="modal">
+    <div class="modal-content" style="text-align: left;">
+      <h3 style="text-align: center; margin-top:0;">🏆 新增段考</h3>
+      <p style="text-align: center; color: #666;">科目：<span id="modal-midterm-subject-name" style="font-weight: bold; color: var(--primary);"></span></p>
+      
+      <div class="input-group">
+        <label>段考名稱</label>
+        <input type="text" id="input-midterm-name" placeholder="例如：第一次段考、期中考">
+      </div>
+      <div class="input-group">
+        <label>分數</label>
+        <input type="number" id="input-midterm-score" placeholder="例如：88">
+      </div>
+      
+      <button class="btn" style="width: 100%; background: #333;" onclick="addMidtermExam()">+ 確定新增</button>
+      <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #ddd;" onclick="closeMidtermModal()">關閉</button>
+    </div>
+  </div>
+
   <!-- <script src="js/script.js"></script>
   <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./js/sw.js'); }</script> -->
   <!-- JavaScript分檔 -->
@@ -278,7 +316,5 @@
 </body>
 
 </html>
-
-
 
 
