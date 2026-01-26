@@ -1,4 +1,4 @@
-const CACHE_NAME = 'student-app-v1';
+const CACHE_NAME = 'student-app-v2.1.0';
 const ASSETS = [
     './index.html',
     './manifest.json'
@@ -21,3 +21,4 @@ self.addEventListener('fetch', (e) => {
         })
     );
 });
+
