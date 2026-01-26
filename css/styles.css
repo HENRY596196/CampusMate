@@ -249,6 +249,8 @@ tr:last-child td {
     font-size: 0.85rem;
     color: #888;
 }
+
+
 .btn-delete {
     background: #ffebee;
     color: var(--danger);
@@ -257,6 +259,16 @@ tr:last-child td {
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.8rem;
+}
+.btn-edit {
+    background: #fff3e0;
+    color: var(--warning); /* 或直接寫 #f39c12 */
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-right: 5px; /* 與刪除按鈕隔開 */
 }
 
 
@@ -476,3 +488,4 @@ tr:last-child td {
     color: #ccc;
     font-size: 0.9rem;
 }
+
