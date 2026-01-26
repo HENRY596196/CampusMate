@@ -131,21 +131,49 @@ function switchSemester() {
     switchDay(currentDay);
     loadGrades();
 }
-
+// --- 舊 ---
+// function addNewSemester() {
+//     const newSemName = prompt("請輸入新學期名稱 (例如: 114-1)", "114-1");
+//     if (newSemName) {
+//         if (semesterList.includes(newSemName)) {
+//             alert("這個學期已經存在囉！");
+//             currentSemester = newSemName;
+//         } else {
+//             semesterList.push(newSemName);
+//             currentSemester = newSemName;
+//             allData[newSemName] = { schedule: JSON.parse(JSON.stringify(defaultSchedule)), grades: [] };
+//         }
+//         saveData();
+//         renderSemesterOptions();
+//         loadSemesterData(currentSemester);
+//         switchDay(currentDay);
+//         loadGrades();
+//     }
+// }
 function addNewSemester() {
+    // ---新版 ---
     const newSemName = prompt("請輸入新學期名稱 (例如: 114-1)", "114-1");
     if (newSemName) {
+        // 1. 先儲存目前學期的資料 (修正點：在切換變數前先存檔)
+        saveData();
+
         if (semesterList.includes(newSemName)) {
             alert("這個學期已經存在囉！");
             currentSemester = newSemName;
         } else {
             semesterList.push(newSemName);
             currentSemester = newSemName;
+            // 初始化新學期資料
             allData[newSemName] = { schedule: JSON.parse(JSON.stringify(defaultSchedule)), grades: [] };
         }
-        saveData();
-        renderSemesterOptions();
+
+        // 2. 載入新學期的資料 (這時會把全域變數清空或載入新資料)
         loadSemesterData(currentSemester);
+        
+        // 3. 再次存檔 (確保新建立的空白學期被寫入 localStorage)
+        saveData();
+
+        renderSemesterOptions();
         switchDay(currentDay);
         loadGrades();
     }
