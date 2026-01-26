@@ -37,11 +37,16 @@ function addAdminInfo() {
     alert("公告已發布 (模擬)：" + newInfoText);
 }
 
+
 function initUI() {
     document.getElementById('user-badge').innerText = userType === 'university' ? '大學部' : '高中部';
+    
+    // --- 修改這裡：強制顯示學分欄位 ---
     const uniElements = document.querySelectorAll('.uni-only');
-    const displayStyle = userType === 'university' ? 'table-cell' : 'none';
-    uniElements.forEach(el => el.style.display = displayStyle);
+    // 原本是 userType === 'university' ? 'table-cell' : 'none';
+    // 改成下面這樣，讓所有人都能看到學分：
+    uniElements.forEach(el => el.style.display = 'table-cell'); 
+    
     switchDay(currentDay);
     loadGrades();
 }
